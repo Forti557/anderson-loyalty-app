@@ -1,0 +1,276 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// === Users ===
+
+model User {
+  id              String   @id @default(cuid())
+  telegramId      BigInt?  @unique
+  telegramUsername String?
+  firstName       String
+  lastName        String?
+  phone           String   @unique
+  email           String?
+  birthday        DateTime?
+  avatarUrl       String?
+  homeRestaurant  String?
+  level           Int      @default(1)
+  totalSpent      Float    @default(0)
+  bonusBalance    Float    @default(0)
+  mindboxId       String?  @unique
+  iikoGuestId     String?  @unique
+  privacyAccepted Boolean  @default(false)
+  onboardingDone  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  children       Child[]
+  stamps         Stamp[]
+  stampCards      StampCard[]
+  transactions   Transaction[]
+  eventBookings  EventBooking[]
+  qrCodes        QrCode[]
+  partyRequests  PartyRequest[]
+  pushTokens     PushToken[]
+
+  @@map("users")
+}
+
+model Child {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  birthDate DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("children")
+}
+
+// === Loyalty ===
+
+model StampCard {
+  id          String   @id @default(cuid())
+  userId      String
+  stampsCount Int      @default(0)
+  completed   Boolean  @default(false)
+  giftClaimed Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stamps Stamp[]
+
+  @@map("stamp_cards")
+}
+
+model Stamp {
+  id          String   @id @default(cuid())
+  userId      String
+  stampCardId String
+  orderId     String?
+  restaurant  String?
+  amount      Float?
+  createdAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stampCard StampCard @relation(fields: [stampCardId], references: [id], onDelete: Cascade)
+
+  @@map("stamps")
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  userId      String
+  type        TransactionType
+  amount      Float
+  bonuses     Float
+  description String?
+  restaurant  String?
+  orderId     String?
+  expiresAt   DateTime?
+  createdAt   DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  ACCRUAL
+  REDEMPTION
+  BIRTHDAY_BONUS
+  WELCOME_BONUS
+  EXPIRED
+}
+
+model QrCode {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@map("qr_codes")
+}
+
+// === Events (Master-classes) ===
+
+model Event {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  imageUrl     String?
+  restaurant   String
+  date         DateTime
+  duration     Int      // minutes
+  ageMin       Int?
+  ageMax       Int?
+  price        Float
+  capacity     Int
+  bookedCount  Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  bookings EventBooking[]
+
+  @@index([restaurant, date])
+  @@map("events")
+}
+
+model EventBooking {
+  id            String        @id @default(cuid())
+  userId        String
+  eventId       String
+  childrenCount Int           @default(1)
+  status        BookingStatus @default(CONFIRMED)
+  cancelledAt   DateTime?
+  createdAt     DateTime      @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@map("event_bookings")
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+// === Party Requests ===
+
+model PartyRequest {
+  id          String             @id @default(cuid())
+  userId      String?
+  name        String
+  phone       String
+  childName   String?
+  childAge    Int?
+  date        DateTime?
+  guestsCount Int?
+  program     String?
+  wishes      String?
+  restaurant  String?
+  status      PartyRequestStatus @default(NEW)
+  total       Float?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([status, createdAt])
+  @@map("party_requests")
+}
+
+enum PartyRequestStatus {
+  NEW
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+// === OTP (SMS Auth) ===
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+  @@map("otp_codes")
+}
+
+// === Push Notifications ===
+
+model PushToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  platform  String   // ios | android | web
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("push_tokens")
+}
+
+model PushNotification {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  data      String?  // JSON
+  status    String   @default("draft") // draft | sent | failed
+  sentAt    DateTime?
+  sentCount Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("push_notifications")
+}
+
+model PushTrigger {
+  id        String   @id @default(cuid())
+  name      String
+  event     String   // birthday | stamp_completed | bonus_expiring | welcome
+  title     String
+  body      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("push_triggers")
+}
+
+// === Analytics ===
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  sessionId String?
+  event     String
+  props     String?  // JSON
+  userAgent String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([event, createdAt])
+  @@index([userId, createdAt])
+  @@map("analytics_events")
+}

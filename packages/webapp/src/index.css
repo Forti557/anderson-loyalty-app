@@ -1,0 +1,211 @@
+
+/* ===== Anderson Mini App — Premium Design System ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  /* — Brand Palette (Brandbook 2025, warm family tones) — */
+  --color-primary: #c4633a;
+  --color-primary-light: #e8845c;
+  --color-primary-dark: #9b3f1e;
+  --color-primary-glow: rgba(196, 99, 58, 0.18);
+
+  --color-accent-green: #3d7a5f;
+  --color-accent-green-light: #e6f2ec;
+  --color-accent-gold: #d4a843;
+  --color-accent-gold-light: #fdf5e3;
+  --color-accent-navy: #1e2d4a;
+  --color-accent-blue: #4a7ab5;
+  --color-accent-blue-light: #eaf2fa;
+
+  /* — Surfaces — */
+  --color-bg: #faf6f1;
+  --color-bg-warm: #f5efe7;
+  --color-card: #ffffff;
+  --color-card-elevated: #ffffff;
+
+  /* — Text — */
+  --color-text: #1a1209;
+  --color-text-secondary: #7a6e5f;
+  --color-text-tertiary: #b0a596;
+  --color-text-inverse: #fffaf5;
+
+  /* — Feedback — */
+  --color-success: #2d8a5e;
+  --color-success-light: #e6f5ee;
+  --color-error: #c0392b;
+  --color-error-light: #fce8e6;
+  --color-warning: #d4a843;
+  --color-warning-light: #fdf5e3;
+
+  /* — Borders & Shadows — */
+  --color-border: #ebe4da;
+  --color-border-light: #f2ece4;
+
+  --shadow-sm: 0 1px 3px rgba(26, 18, 9, 0.04);
+  --shadow-md: 0 4px 16px rgba(26, 18, 9, 0.06);
+  --shadow-lg: 0 8px 32px rgba(26, 18, 9, 0.08);
+  --shadow-xl: 0 16px 48px rgba(26, 18, 9, 0.12);
+  --shadow-glow: 0 4px 20px var(--color-primary-glow);
+
+  /* — Spacing — */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+  --space-4xl: 40px;
+
+  /* — Radius — */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* — Typography — */
+  --font-display: 'Nunito', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-lg: 17px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+
+  /* — Transitions — */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* — Safe area — */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --tab-bar-height: 72px;
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== Body ===== */
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; }
+
+/* ===== Typography ===== */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+h1 { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+h4 { font-size: var(--text-lg); }
+
+p {
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* ===== Interactive elements ===== */
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--duration-fast) var(--ease-spring),
+              opacity var(--duration-fast) ease,
+              box-shadow var(--duration-normal) ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+  font-size: 16px; /* prevent zoom on iOS */
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== Utility animations ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--color-primary-glow); }
+  50% { box-shadow: 0 0 0 8px transparent; }
+}
+
+.animate-in {
+  animation: fadeInUp var(--duration-slow) var(--ease-out) both;
+}
+
+.animate-in-delay-1 { animation-delay: 60ms; }
+.animate-in-delay-2 { animation-delay: 120ms; }
+.animate-in-delay-3 { animation-delay: 180ms; }
+.animate-in-delay-4 { animation-delay: 240ms; }
+
+/* ===== Glass effect ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}

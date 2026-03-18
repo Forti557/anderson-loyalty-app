@@ -1,0 +1,18 @@
+node_modules
+dist
+.env
+*.log
+Backup/
+Export/
+LOCAL_TESTING.txt
+
+# macOS metadata
+._*
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Claude Code
+.claude/settings.local.json
